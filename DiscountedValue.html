@@ -3,11 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CP Face Value Calculator</title>
+    <title>CP Discounted Value Calculator</title>
     <style>
-      * {
-        box-sizing: border-box;
-      }
       body {
         font-family: Arial, sans-serif;
         text-align: center;
@@ -21,7 +18,7 @@
       button {
         margin-bottom: 10px;
         padding: 10px;
-        width: 400px;
+        width: 100%;
       }
       .switch_button {
         cursor: pointer;
@@ -38,32 +35,30 @@
     </style>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
+        // Ensure script works within SharePoint's environment
         if (window.SP && SP.SOD) {
           SP.SOD.executeFunc("sp.js", "SP.ClientContext", function () {
             console.log("SharePoint environment detected.");
           });
         }
-        calculate();
       });
 
       function calculate() {
-        let discountedValue =
-          parseFloat(document.getElementById("discountedValue").value) || 0;
+        let faceValue =
+          parseFloat(document.getElementById("faceValue").value) || 0;
         let tenor = parseInt(document.getElementById("tenor").value) || 180;
         let discountRate =
           parseFloat(document.getElementById("discountRate").value) / 100 ||
-          20.657 / 100;
+          0.20657; // Default 20.657%
 
-        let faceValue = discountedValue / (1 - discountRate * (tenor / 365));
-        let discount = faceValue - discountedValue;
+        let discount = faceValue * discountRate * (tenor / 365); // Adjusting for tenor impact
+        let discountedValue = faceValue - discount;
 
-        document.getElementById("faceValue").value = (
-          Math.floor(faceValue / 1000) * 1000
-        )
+        document.getElementById("discountedValue").innerText = discountedValue
           .toFixed(2)
           .toString()
           .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        document.getElementById("discount").value = discount
+        document.getElementById("discount").innerText = discount
           .toFixed(2)
           .toString()
           .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -72,19 +67,18 @@
   </head>
   <body>
     <div class="container">
-      <h2>CP Face Value Calculator</h2>
-      <label for="discountedValue">Discounted Value:</label>
+      <h2>CP Discounted Value Calculator</h2>
+      <label for="faceValue">Face Value:</label>
       <input
         type="number"
-        id="discountedValue"
-        placeholder="Enter Discounted Value"
+        id="faceValue"
+        placeholder="Enter Face Value"
         oninput="calculate()"
       />
       <label for="tenor">Tenor (Days):</label>
       <input
         type="number"
         id="tenor"
-        value="180"
         placeholder="Enter Tenor"
         oninput="calculate()"
       />
@@ -92,21 +86,16 @@
       <input
         type="number"
         id="discountRate"
-        value="20.657"
         placeholder="Enter Discount Rate"
         step="0.01"
         oninput="calculate()"
       />
       <h3>Results:</h3>
-      <label for="faceValue">Face Value:</label>
-      <input type="text" id="faceValue" readonly />
-      <label for="discount">Discount:</label>
-      <input type="text" id="discount" readonly />
-      <button
-        class="switch_button"
-        onclick="window.location.href='DiscountedValue.html'"
-      >
-        Switch to Discounted Value Calculator
+      <p>Discounted Value: <span id="discountedValue">0.00</span></p>
+      <p>Discount: <span id="discount">0.00</span></p>
+
+      <button class="switch_button" onclick="window.location.href='index.html'">
+        Switch to Face Value Calculator
       </button>
     </div>
   </body>
