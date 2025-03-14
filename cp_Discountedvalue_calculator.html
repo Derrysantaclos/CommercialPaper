@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CP Face Value Calculator</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
+        .container { max-width: 400px; margin: auto; }
+        input, button { margin-top: 10px; padding: 10px; width: 100%; }
+    </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            if (window.SP && SP.SOD) {
+                SP.SOD.executeFunc('sp.js', 'SP.ClientContext', function() {
+                    console.log("SharePoint environment detected.");
+                });
+            }
+            calculate();
+        });
+        
+        function calculate() {
+            let discountedValue = parseFloat(document.getElementById('discountedValue').value) || 0;
+            let tenor = parseInt(document.getElementById('tenor').value) || 180;
+            let discountRate = parseFloat(document.getElementById('discountRate').value) / 100 || 20.657 / 100;
+            
+            let faceValue = discountedValue / (1 - (discountRate * (tenor / 365)));
+            let discount = faceValue - discountedValue;
+            
+            document.getElementById('faceValue').value = (Math.floor(faceValue / 1000) * 1000).toFixed(2);
+            document.getElementById('discount').value = discount.toFixed(2);
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>CP Face Value Calculator</h2>
+        <label for="discountedValue">Discounted Value:</label>
+        <input type="number" id="discountedValue" placeholder="Enter Discounted Value" oninput="calculate()">
+        <label for="tenor">Tenor (Days):</label>
+        <input type="number" id="tenor" value="180" placeholder="Enter Tenor" oninput="calculate()">
+        <label for="discountRate">Discount Rate (%):</label>
+        <input type="number" id="discountRate" value="20.657" placeholder="Enter Discount Rate" step="0.01" oninput="calculate()">
+        <h3>Results:</h3>
+        <label for="faceValue">Face Value:</label>
+        <input type="text" id="faceValue" readonly>
+        <label for="discount">Discount:</label>
+        <input type="text" id="discount" readonly>
+    </div>
+</body>
+</html>
