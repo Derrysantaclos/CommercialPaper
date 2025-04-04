@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CP Face Value Calculator</title>
+    <title>Face Value Calculator</title>
     <style>
       * {
         box-sizing: border-box;
@@ -51,9 +51,9 @@
       function calculate() {
         let discountedValue =
           parseFloat(document.getElementById("discountedValue").value) || 0;
-        let tenor = parseInt(document.getElementById("cpTenor").value) || 180;
+        let tenor = parseInt(document.getElementById("tenor").value) || 1;
         let discountRate =
-          parseFloat(document.getElementById("discountRate").value) || 0.194389;
+          parseFloat(document.getElementById("discountRate").value) / 100 || 0;
 
         let faceValue = discountedValue / (1 - discountRate * (tenor / 365));
         let discount = faceValue - discountedValue;
@@ -69,17 +69,6 @@
           .toString()
           .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       }
-      function tenorChanged() {
-        let currentTenor = document.getElementById("cpTenor").value;
-        let discountRate = 0.194389;
-        if (currentTenor == 180) {
-          discountRate = 0.194389;
-        } else if (currentTenor == 270) {
-          discountRate = 0.210983;
-        }
-        document.getElementById("discountRate").value = discountRate;
-        calculate();
-      }
     </script>
   </head>
   <body>
@@ -93,19 +82,22 @@
         oninput="calculate()"
       />
       <label for="cpTenor">Tenor (Days):</label>
-
-      <select id="cpTenor" onchange="tenorChanged()">
+      <input
+        id="tenor"
+        oninput="calculate()"
+        placeholder="Enter number of days"
+      />
+      <!-- <select id="cpTenor" onchange="tenorChanged()">
         <option value="180">180 days</option>
         <option value="270">270 days</option>
-      </select>
+      </select> -->
       <label for="discountRate">Discount Rate (%):</label>
       <input
         type="number"
         id="discountRate"
-        value="0.194389"
         placeholder="Enter Discount Rate"
         step="0.01"
-        readonly
+        oninput="calculate()"
       />
       <h3>Results:</h3>
       <label for="faceValue">Face Value:</label>

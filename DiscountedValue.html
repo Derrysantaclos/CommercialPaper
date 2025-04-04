@@ -51,9 +51,9 @@
       function calculate() {
         let faceValue =
           parseFloat(document.getElementById("faceValue").value) || 0;
-        let tenor = parseInt(document.getElementById("cpTenor").value) || 180;
+        let tenor = parseInt(document.getElementById("tenor").value) || 0;
         let discountRate =
-          parseFloat(document.getElementById("discountRate").value) || 0.194389; // Default 20.657%
+          parseFloat(document.getElementById("discountRate").value) / 100 || 0; // Default 20.657%
 
         let discount = faceValue * discountRate * (tenor / 365); // Adjusting for tenor impact
         let discountedValue = faceValue - discount;
@@ -67,22 +67,11 @@
           .toString()
           .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       }
-      function tenorChanged() {
-        let currentTenor = document.getElementById("cpTenor").value;
-        let discountRate = 0.194389;
-        if (currentTenor == 180) {
-          discountRate = 0.194389;
-        } else if (currentTenor == 270) {
-          discountRate = 0.210983;
-        }
-        document.getElementById("discountRate").value = discountRate;
-        calculate();
-      }
     </script>
   </head>
   <body>
     <div class="container">
-      <h2>CP Discounted Value Calculator</h2>
+      <h2>Discounted Value Calculator</h2>
       <label for="faceValue">Face Value:</label>
       <input
         type="number"
@@ -91,10 +80,15 @@
         oninput="calculate()"
       />
       <label for="cpTenor">Tenor (Days):</label>
-      <select id="cpTenor" onchange="tenorChanged()">
+      <input
+        id="tenor"
+        oninput="calculate()"
+        placeholder="Enter number of days"
+      />
+      <!-- <select id="cpTenor" onchange="tenorChanged()">
         <option value="180">180 days</option>
         <option value="270">270 days</option>
-      </select>
+      </select> -->
 
       <label for="discountRate">Discount Rate (%):</label>
 
@@ -104,8 +98,6 @@
         placeholder="Enter Discount Rate"
         step="0.01"
         oninput="calculate()"
-        value="0.194389"
-        readonly
       />
       <h3>Results:</h3>
       <p>Discounted Value: <span id="discountedValue">0.00</span></p>
